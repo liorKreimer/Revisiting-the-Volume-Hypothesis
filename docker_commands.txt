@@ -1,0 +1,11 @@
+
+docker compose up -d --force-recreate --build
+
+docker rm -f $(docker ps -aq)
+
+docker logs -f rank4
+
+
+
+
+

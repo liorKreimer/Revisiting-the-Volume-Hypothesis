@@ -1,0 +1,106 @@
+
+
+
+
+services:
+  rank0:
+    build: .
+    volumes:
+        - ./:/data
+    container_name: rank0
+    environment:
+      - RANK=0
+      - WORLD_SIZE=4
+      - MASTER_ADDR=rank0
+      - LOCAL_RANK=0
+      - NCCL_P2P_DISABLE=0
+      - PYTHONUNBUFFERED=1
+      - NCCL_DEBUG=INFO
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    runtime: nvidia
+    networks:
+      - distnet
+
+  rank1:
+    build: .
+    volumes:
+        - ./:/data
+    container_name: rank1
+    environment:
+      - RANK=1
+      - WORLD_SIZE=4
+      - MASTER_ADDR=rank0
+      - LOCAL_RANK=0
+      - NCCL_P2P_DISABLE=0
+      - PYTHONUNBUFFERED=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    runtime: nvidia
+    depends_on:
+      - rank0
+    networks:
+      - distnet
+      
+  rank2:
+    build: .
+    volumes:
+        - ./:/data
+    container_name: rank2
+    environment:
+      - RANK=2
+      - WORLD_SIZE=4
+      - MASTER_ADDR=rank0
+      - LOCAL_RANK=0
+      - NCCL_P2P_DISABLE=0
+      - PYTHONUNBUFFERED=1
+      - NCCL_BLOCKING_WAIT=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    runtime: nvidia
+    depends_on:
+      - rank0
+    networks:
+      - distnet
+
+  rank3:
+    build: .
+    volumes:
+        - ./:/data
+    container_name: rank3
+    environment:
+      - RANK=3
+      - WORLD_SIZE=4
+      - MASTER_ADDR=rank0
+      - LOCAL_RANK=0
+      - NCCL_P2P_DISABLE=0
+      - PYTHONUNBUFFERED=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+    runtime: nvidia
+    depends_on:
+      - rank0
+    networks:
+      - distnet
+      
+
+networks:
+  distnet:
+    driver: bridge
+
