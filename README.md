@@ -29,6 +29,11 @@ The provided `.sbatch` files automate the setup of temporary scratch directories
     * Because simulations for large datasets can be very long, this script is designed to be executed **during the run**.
     * Running this on the fly allows you to generate and inspect plots from intermediate `.npz` results while the simulation is still active, providing real-time insights into the density of states estimation.
 
+### Baseline Comparison
+* **Gradient Training (`gradient_training.py`)**: 
+    * This script provides the SGD and GD baselines used for comparison against the REWL sampling results.
+    * It implements standard training loops using the Adam optimizer and BinaryConnect to evaluate how traditional gradient-based methods perform on the same datasets and architectures.
+
 ### Local Execution
 While the focus is on cluster deployment, local execution is also possible using the provided `compose.yaml` for GPU-shared environments.
 

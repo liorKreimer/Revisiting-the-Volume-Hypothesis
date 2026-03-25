@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --partition=rtx6000
-#SBATCH --qos= name_of_the_owner
+#SBATCH --qos=pakman
 ##SBATCH --nodelist=ise-6000-02  # <--- ADDED LINE: Forces job onto this specific node
 #SBATCH --job-name=Sim_B_REWL
 #SBATCH --time=7-00:00:00
