@@ -21,23 +21,16 @@ import torch.optim
 import torch.utils.data
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
-
-
-
 from collections import Counter
-
-
-
 # 
-
-from utils import SimpleCNN
+from utils import SimpleCNN_wide, SimpleCNN_deep
 from config import n_train, n_test, bins_e, bins_q, eq_limits
 
 
 ####################
 
 
-
+'''
 #%% Datasets
 
 transform = transforms.Compose([
@@ -94,6 +87,7 @@ print(f"Unique train labels: {train_target.unique().tolist()}")
 # Save tensors for REWL walkers
 torch.save([test_data.cpu(), test_target.cpu(), train_data.cpu(), train_target.cpu()],
            './wl_data_tensors.pt')
+'''
 
 torch_t_filename = './wl_data_tensors.pt'
 tt = torch.load(torch_t_filename)
@@ -102,13 +96,8 @@ test_target = tt[1]
 train_data = tt[2]
 train_target = tt[3]
 
-
-
-
 # train_loader = torch.utils.data.DataLoader(train_dataset,batch_size=60, shuffle=True)
 # val_loader = torch.utils.data.DataLoader(val_dataset,batch_size=60, shuffle=True)
-
-
 
 
 #%% Initial weights
@@ -116,7 +105,7 @@ train_target = tt[3]
 
 device = torch.device("cuda:0")    
 
-model = SimpleCNN()
+model = SimpleCNN_deep()
 model.to(device)
 bin_op = binaryconnect.BC(model)
 
@@ -164,13 +153,13 @@ criterion = nn.CrossEntropyLoss()
 # We train using BinaryConnect https://arxiv.org/abs/1511.00363
 
 
-model = SimpleCNN()
+model = SimpleCNN_deep()
 model.to(device)
 bin_op = binaryconnect.BC(model)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=5e-4)
 
 
-for it in range(15000):
+for it in range(1):
     bin_op.binarization()
     if it%100 ==0:
         e = get_train_accuracy()
@@ -191,10 +180,10 @@ for it in range(15000):
 
 
 #saving the weights of the model for each rank
-model = SimpleCNN()
+model = SimpleCNN_deep()
 model.to(device)
 bin_op = binaryconnect.BC(model)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.000001, weight_decay=5e-4)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=5e-4)
 
 initialized = set()
 

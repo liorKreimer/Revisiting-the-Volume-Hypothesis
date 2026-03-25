@@ -9,7 +9,7 @@ import torch.nn.parallel
 import numpy as np
 
 from utils import Walker, exchange
-from config import eq_limits, params
+from config import eq_limits, params, model_class
 from config import  paired_ranks_for_exchange
 
 
@@ -39,11 +39,8 @@ def main():
     
     
 
-    limits = eq_limits[rank]
-    walker = Walker(limits, params, device, rank)
-    # Add these lines to print the walker's assigned range
-    print(f"Rank {rank}: Walker's Q-range: [{walker.q_min}, {walker.q_max}] "
-          f"E-range: [{walker.e_min}, {walker.e_max}]")
+    limits = eq_limits[rank]    
+    walker = Walker(limits, params, device, rank, model_class)
     
 
     t0 = time.time()
@@ -69,25 +66,24 @@ def main():
             pair = paired_ranks_for_exchange[exchange_direction]
 
             paired_rank = pair[rank]
-            print(f'\nit: {it}. I will try to exchange with rank {paired_rank}')
-            exchange(walker,paired_rank)                
+            print(f'\nit: {walker.it:,}. I will try to exchange with rank {paired_rank}')
+            exchange(walker,paired_rank,params)                
                 
             
-        if it % print_every ==0:            
-            print('\nTime:', f'{time.time()-t0:.2f}', 'rank', f'{rank}', 'it:', f'{it}' )            
+        if walker.it % print_every ==0:            
+            print('\nTime:', f'{time.time()-t0:.2f}', 'rank', f'{rank}', 'it:', f'{walker.it:,}' )            
             if walker.need_initialization:
                 print('Not yet initialized.')
             else:
-                h = walker.h.size - (walker.h > 0.9*walker.h.mean()).sum() #  the number of bins in the histogram that have NOT yet reached 90% of the average histogram count
+                h = walker.h.size - (walker.h > params.flatness*walker.h.mean()).sum()
                 print('h_zeros:', (walker.h==0).sum(), '  cond_h:', f'{h}' )        
-                print(f'reject_out rate: {walker.reject_out/print_every}  accept rate: {walker.random_accept/print_every}')
-                print(f'Log_f: {walker.log_f}')  # Add this line to print log_f
+                print(f'reject_out rate: {walker.reject_out/print_every}  accept rate: {walker.random_accept/print_every}'  )        
                 walker.reject_out = 0 
                 walker.random_accept = 0 
             
             t0 = time.time()
             
-        if it%save_every ==0:            
+        if walker.it%save_every ==0:            
             walker.save()
             # Add this line to copy back immediately after saving
             # It copies from the scratch results folder to your project's results folder

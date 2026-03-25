@@ -1,7 +1,5 @@
 
 
-
-
 services:
   rank0:
     build: .
