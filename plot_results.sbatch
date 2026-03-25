@@ -11,7 +11,7 @@ cd ~/rewl_Project/
 
 # Run the plotting script
 module load anaconda ### load anaconda module
-source activate liork_env ### activate a conda environment, replace my_env with your conda environment
+source activate my_env ### activate a conda environment, replace my_env with your conda environment
 python plot_results.py
 
 # Optional: Copy plots to a specific location if not already saving directly in rewl_Project/
