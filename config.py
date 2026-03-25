@@ -3,11 +3,10 @@
 
 import torch
 from dataclasses import dataclass
-from utils import SimpleCNN
-
-model_class = SimpleCNN
+from utils import SimpleCNN_wide
 
 
+model_class = SimpleCNN_wide # the model class to be trained.
 @dataclass
 class Params:
     n_train: int
@@ -19,7 +18,7 @@ class Params:
     dtype: None
 
 
-n_train = 2400
+n_train = 2400 # number of training samples
 n_test = 10000
 bins_q = 1000  # test accuracy bins
 '''
@@ -36,9 +35,9 @@ e = int((eacc/n_train)*(bins_e-1))  in [0,1...bins_e-1]
 Note that only when eacc==n_train_samples we get e == bins_e-1 (the maximal number)
 '''
 
-flatness = 0.95
-prop_size = 3
-dtype = torch.float16
+flatness = 0.95 # the flatness criterion for the histogram. We consider the histogram to be flat if all bins have at least flatness*mean counts.
+prop_size = 3  # the number of samples to be proposed for the next step.
+dtype = torch.float16 # the data type for the model parameters. We use float16 to save memory.
 params = Params(n_train, n_test, bins_e, bins_q, flatness, prop_size, dtype)
 
 bins_q = 1000  # test accuracy bins
